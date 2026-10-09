@@ -1,0 +1,933 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{geometry}
+\usepackage{bm}
+\geometry{a4paper,margin=2.5cm}
+\allowdisplaybreaks
+
+\title{STEP1: Shock Propagation Along a Single Branch\\
+Unifying the Second Version's Event Definitions with the First Version's Symmetric Formulas}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Purpose and Unified Conventions}
+
+This document retains two complementary forms of representation:
+
+\begin{enumerate}
+    \item Use explicit event definitions to distinguish ``when a production node itself stops/recovers'' from
+    ``when a specific downstream node actually observes that shock'';
+    \item For a single shutdown window, preserve the highly symmetric
+    stop/recovery recursions and cumulative formulas of the original version;
+    \item For multiple windows and general DAGs, use the cumulative deficit function \(D(t)\)
+    as a unified generalization of those formulas.
+\end{enumerate}
+
+The central principle is
+\[
+\boxed{
+\text{Define physical events first, derive single-window formulas, then generalize to }D(t)\text{.}
+}
+\]
+
+Consider a direct production-relation branch
+\[
+P_p\longrightarrow M_1\longrightarrow\cdots
+\longrightarrow M_K\longrightarrow P_q.
+\]
+
+\section{The Two Types of Events Must Be Distinguished}
+
+\subsection{The Production Node's Own Production-Start Event}
+
+Let \(u_p(t)\) denote the actual intensity of production activity initiated by node \(P_p\) at time \(t\),
+with initialized normal intensity
+\[
+u_p^0\equiv u_p(0).
+\]
+
+If \(P_p\) stops initiating new production during a single complete-shutdown window, define
+\[
+\boxed{
+I_p^{act}=[\sigma_p,\rho_p),
+}
+\]
+where
+\[
+\boxed{
+\sigma_p
+=
+\text{time when \(P_p\) itself stops initiating new production},
+}
+\]
+\[
+\boxed{
+\rho_p
+=
+\text{time when \(P_p\) itself resumes initiating production at normal intensity}.
+}
+\]
+
+Define the duration of this internal shutdown window as
+\[
+\boxed{
+\kappa_p=\rho_p-\sigma_p.
+}
+\]
+
+Here \(\sigma_p,\rho_p\) describe only events on
+\[
+\boxed{\text{the production-start plane of \(P_p\)}}
+\]
+and do not imply that any particular downstream node has already experienced a supply interruption.
+
+\subsection{Stop/Recovery Observed by a Specific Downstream Node}
+
+For a specific direct downstream node \(P_q\), define
+\[
+\boxed{\begin{gathered}
+t_{p\to q}^{\mathrm{stop}}=\\
+\text{the first time \(P_q\) cannot obtain normally required inputs}\\
+\text{because of the supply deficit from \(P_p\)}
+\end{gathered}}
+\]
+and
+\[
+\boxed{\begin{gathered}
+t_{p\to q}^{\mathrm{rec}}=\\
+\text{the first time, after an effective interruption, that \(P_q\)}\\
+\text{again receives normal supply from \(P_p\)'s resumed production}
+\end{gathered}}
+\]
+
+Therefore, we must distinguish
+\[
+\boxed{
+(\sigma_p,\rho_p)
+\neq
+(t_{p\to q}^{\mathrm{stop}},t_{p\to q}^{\mathrm{rec}}).
+}
+\]
+
+The former is a
+\[
+\text{node-local event},
+\]
+The latter is a
+\[
+\text{downstream-visible event}.
+\]
+
+If \(P_p\) connects to multiple downstream nodes, then generally
+\[
+t_{p\to q_1}^{\mathrm{stop}}
+\neq
+t_{p\to q_2}^{\mathrm{stop}},
+\qquad
+t_{p\to q_1}^{\mathrm{rec}}
+\neq
+t_{p\to q_2}^{\mathrm{rec}},
+\]
+because different output branches may have different delays and inventory buffers.
+
+\section{Two Basic Propagation Quantities}
+
+For a direct branch \(P_p\to P_q\), let the transportation-edge and inventory-node sets be
+\[
+\mathcal E_{p\to q},
+\qquad
+\mathcal M_{p\to q}.
+\]
+
+\subsection{Total Time Shift}
+
+Define
+\[
+\boxed{
+\Theta_{p\to q}
+=
+\tau_p^{prod}
++
+\sum_{e\in\mathcal E_{p\to q}}
+\tau_e^{trans}.
+}
+\tag{1}
+\]
+
+Here, the upstream process \(P_p\)'s own production delay is explicitly included in
+the downstream propagation from \(P_p\) to \(P_q\).
+
+Therefore \(\Theta_{p\to q}\) represents only
+\[
+\boxed{\text{time shift}}
+\]
+and does not change the duration of a deficit.
+
+\subsection{Total Inventory Coverage}
+
+For each inventory node \(m\in\mathcal M_{p\to q}\),
+denote its initialized normal outflow rate by
+\[
+f_m^{out,0}>0.
+\]
+
+Define inventory coverage
+\[
+c_m=\frac{q_m(0)}{f_m^{out,0}},
+\]
+The total inventory coverage time of the entire branch is then
+\[
+\boxed{
+C_{p\to q}
+=
+\sum_{m\in\mathcal M_{p\to q}}
+\frac{q_m(0)}{f_m^{out,0}}.
+}
+\tag{2}
+\]
+
+Physically:
+\[
+\boxed{
+\text{Delay controls shock arrival; inventory controls remaining deficit duration.}
+}
+\]
+
+\section{Main STEP1 Result: Symmetric Propagation Formulas for a Single Shutdown Window}
+
+Let \(P_p\)'s own production-start gap be
+\[
+[\sigma_p,\rho_p),
+\qquad
+\kappa_p=\rho_p-\sigma_p.
+\]
+
+Define the candidate supply-interruption front
+\[
+\boxed{
+s_{p\to q}
+=
+\sigma_p+\Theta_{p\to q}+C_{p\to q},
+}
+\tag{3}
+\]
+and the arrival front of resumed production output
+\[
+\boxed{
+r_{p\to q}
+=
+\rho_p+\Theta_{p\to q}.
+}
+\tag{4}
+\]
+
+If
+\[
+s_{p\to q}<r_{p\to q},
+\]
+equivalently
+\[
+\boxed{
+\kappa_p>C_{p\to q},
+}
+\tag{5}
+\]
+then this internal shutdown of \(P_p\) penetrates all inventories on the branch and affects \(P_q\).
+
+In this case, the central STEP1 formulas are
+\[
+\boxed{
+\begin{aligned}
+t_{p\to q}^{\mathrm{stop}}
+&=
+\sigma_p
++\Theta_{p\to q}
++C_{p\to q},
+\\[1mm]
+t_{p\to q}^{\mathrm{rec}}
+&=
+\rho_p
++\Theta_{p\to q}.
+\end{aligned}
+}
+\tag{6}
+\]
+
+This preserves the most direct symmetric structure of the original version:
+\[
+\boxed{
+\begin{aligned}
+\text{stop}
+&=
+\text{upstream stop}
++\text{delay}
++\text{inventory coverage},
+\\
+\text{recovery}
+&=
+\text{upstream recovery}
++\text{delay}.
+\end{aligned}
+}
+\tag{7}
+\]
+
+Subtracting the two formulas yields
+\[
+\boxed{
+t_{p\to q}^{\mathrm{rec}}
+-
+t_{p\to q}^{\mathrm{stop}}
+=
+(\rho_p-\sigma_p)-C_{p\to q}.
+}
+\tag{8}
+\]
+
+Thus the effective duration of the supply interruption is
+\[
+\boxed{
+\Delta_{p\to q}
+=
+\left[
+(\rho_p-\sigma_p)-C_{p\to q}
+\right]_+.
+}
+\tag{9}
+\]
+
+If
+\[
+s_{p\to q}\ge r_{p\to q},
+\]
+then
+\[
+\boxed{
+\Delta_{p\to q}=0.
+}
+\tag{10}
+\]
+
+In this case, although \(P_p\) itself did indeed shut down,
+the resumed-output front catches up to the deficit front before the inventories are exhausted,
+so \(P_q\) never experiences a genuine effective supply interruption.
+Here \(r_{p\to q}\) can be called the ``resumed-output arrival front,''
+but it should not be described as \(P_q\) ``shutting down and then recovering.''
+
+\section{Standard \(P-M-M-P\) Structure}
+
+Consider
+\[
+P_p\rightarrow M_1\rightarrow M_2\rightarrow P_q.
+\]
+
+Define
+\[
+\boxed{
+\begin{aligned}
+\Theta_{p\to q}
+={}&
+\tau_p^{prod}
++\tau_{P_p\to M_1}^{trans}
++\tau_{M_1\to M_2}^{trans}
++\tau_{M_2\to P_q}^{trans},
+\\[1mm]
+C_{p\to q}
+={}&
+\frac{q_{M_1}(0)}
+     {f_{M_1\to M_2}^{0}}
++
+\frac{q_{M_2}(0)}
+     {f_{M_2\to P_q}^{0}}.
+\end{aligned}
+}
+\tag{11}
+\]
+
+If a single shutdown window penetrates all inventories, then
+\[
+\boxed{
+\begin{aligned}
+t_{p\to q}^{\mathrm{stop}}
+={}&
+\sigma_p
++\tau_p^{prod}
++\tau_{P_p\to M_1}^{trans}
++\frac{q_{M_1}(0)}{f_{M_1\to M_2}^{0}}
+\\
+&+
+\tau_{M_1\to M_2}^{trans}
++\frac{q_{M_2}(0)}{f_{M_2\to P_q}^{0}}
++\tau_{M_2\to P_q}^{trans},
+\\[2mm]
+t_{p\to q}^{\mathrm{rec}}
+={}&
+\rho_p
++\tau_p^{prod}
++\tau_{P_p\to M_1}^{trans}
++\tau_{M_1\to M_2}^{trans}
++\tau_{M_2\to P_q}^{trans}.
+\end{aligned}
+}
+\tag{12}
+\]
+
+Thus, production and transportation delays
+appear perfectly symmetrically in the stop and recovery fronts;
+inventory coverage enters only the stop front.
+
+\section{Single-Source Linear Chain: Recovering the Original Recursive and Cumulative Forms}
+
+Consider
+\[
+P_0
+\rightarrow\mathcal B_1
+\rightarrow P_1
+\rightarrow\mathcal B_2
+\rightarrow P_2
+\rightarrow\cdots
+\rightarrow\mathcal B_i
+\rightarrow P_i,
+\]
+where \(\mathcal B_j\) denotes
+a material branch from \(P_{j-1}\) to \(P_j\) containing no other production nodes.
+
+Define
+\[
+\Theta_j
+\equiv
+\Theta_{P_{j-1}\to P_j},
+\qquad
+C_j
+\equiv
+C_{P_{j-1}\to P_j}.
+\]
+
+Suppose the source \(P_0\) experiences a single production-start gap
+\[
+[\sigma_0,\rho_0).
+\]
+
+In a single-input linear chain, as long as the shock has not been fully absorbed by inventory,
+the downstream-visible shortage from \(P_{j-1}\) to \(P_j\)
+directly determines \(P_j\)'s own production-start gap.
+Hence the recursion is
+\[
+\boxed{
+\begin{aligned}
+\sigma_j
+&=
+\sigma_{j-1}
++\Theta_j
++C_j,
+\\[1mm]
+\rho_j
+&=
+\rho_{j-1}
++\Theta_j.
+\end{aligned}
+}
+\tag{13}
+\]
+
+Summing segment by segment gives
+\[
+\boxed{
+\begin{aligned}
+\sigma_i
+&=
+\sigma_0
++\sum_{j=1}^{i}\Theta_j
++\sum_{j=1}^{i}C_j,
+\\[1mm]
+\rho_i
+&=
+\rho_0
++\sum_{j=1}^{i}\Theta_j.
+\end{aligned}
+}
+\tag{14}
+\]
+
+Therefore
+\[
+\boxed{
+\rho_i-\sigma_i
+=
+(\rho_0-\sigma_0)
+-
+\sum_{j=1}^{i}C_j.
+}
+\tag{15}
+\]
+
+If the earlier version assumes
+\[
+\sigma_0=0,
+\qquad
+\rho_0=k,
+\]
+we immediately obtain
+\[
+\boxed{
+\begin{aligned}
+\sigma_i
+&=
+\sum_{j=1}^{i}(\Theta_j+C_j),
+\\[1mm]
+\rho_i
+&=
+k+\sum_{j=1}^{i}\Theta_j,
+\end{aligned}
+}
+\tag{16}
+\]
+and
+\[
+\boxed{
+\rho_i-\sigma_i
+=
+k-\sum_{j=1}^{i}C_j.
+}
+\tag{17}
+\]
+
+If
+\[
+k\le \sum_{j=1}^{i}C_j,
+\]
+then the shock has already been fully absorbed by accumulated inventory coverage before reaching \(P_i\),
+so \(P_i\) develops no effective production-start gap.
+
+\section{From the Original Cumulative Formulas to the Cumulative Deficit Function \(D(t)\)}
+
+The original symmetric formulas are suitable for describing
+\[
+\boxed{\text{a single stop/recovery window}.}
+\]
+
+To handle multiple disjoint windows, branching after merging, and general DAGs,
+define the cumulative internal production-start deficit of \(P_p\) as
+\[
+\boxed{
+D_p^{act}(t)
+=
+\text{Equivalent normal-production time not initiated by \(P_p\) up to time \(t\)}.
+}
+\tag{18}
+\]
+
+Under the complete-shutdown / complete-recovery baseline,
+\[
+\dot D_p^{act}(t)\in\{0,1\}
+\]
+holds almost everywhere, and
+\[
+\boxed{
+u_p(t)
+=
+u_p^0\left[1-\dot D_p^{act}(t)\right].
+}
+\tag{19}
+\]
+
+For a single internal shutdown window
+\[
+[\sigma_p,\rho_p),
+\]
+we have
+\[
+\boxed{
+D_p^{act}(t)
+=
+\min\left\{
+(t-\sigma_p)_+,
+\rho_p-\sigma_p
+\right\}.
+}
+\tag{20}
+\]
+
+Adopt the convention that when \(s<0\),
+\[
+D_p^{act}(s)=0.
+\]
+
+Then the STEP1 propagation operator for arbitrary windows is defined as
+\[
+\boxed{
+D_{p\to q}(t)
+=
+\mathcal T_{p\to q}[D_p^{act}](t)
+=
+\left[
+D_p^{act}(t-\Theta_{p\to q})
+-
+C_{p\to q}
+\right]_+.
+}
+\tag{21}
+\]
+
+Here
+\[
+(x)_+\equiv\max\{x,0\}.
+\]
+
+Its basic components are
+\[
+\boxed{
+\text{Delay}:D(t)\mapsto D(t-\tau),
+}
+\tag{22}
+\]
+and
+\[
+\boxed{
+\text{Inventory}:D(t)\mapsto
+\left[D(t)-\frac{q(0)}{f^0}\right]_+.
+}
+\tag{23}
+\]
+
+Since
+\[
+[[x-c_1]_+-c_2]_+
+=
+[x-c_1-c_2]_+,
+\]
+the coverage times of multiple sequential inventories can be added directly.
+
+\section{How the \(D(t)\) Operator Reduces to the Original Symmetric Formulas}
+
+Substitute the single-window equation \((20)\) into \((21)\):
+\[
+D_{p\to q}(t)
+=
+\left[
+\min\left\{
+(t-\Theta_{p\to q}-\sigma_p)_+,
+\rho_p-\sigma_p
+\right\}
+-
+C_{p\to q}
+\right]_+.
+\tag{24}
+\]
+
+If
+\[
+\rho_p-\sigma_p>C_{p\to q},
+\]
+then the time when \(D_{p\to q}(t)\) begins to increase is precisely
+\[
+\boxed{
+t_{p\to q}^{\mathrm{stop}}
+=
+\sigma_p+\Theta_{p\to q}+C_{p\to q},
+}
+\]
+and the time when it stops increasing is precisely
+\[
+\boxed{
+t_{p\to q}^{\mathrm{rec}}
+=
+\rho_p+\Theta_{p\to q}.
+}
+\]
+
+Therefore
+\[
+\boxed{\begin{gathered}
+\text{\(D(t)\) is not a separate model;}\\
+\text{it generalizes the original stop/recovery formulas to multiple windows.}
+\end{gathered}}
+\tag{25}
+\]
+
+\section{Operator Composition and the Original ``Segment-by-Segment Summation''}
+
+Define
+\[
+\mathcal T_{\Theta,C}[D](t)
+=
+[D(t-\Theta)-C]_+.
+\]
+
+Across two branch segments:
+\[
+D_1(t)
+=
+\mathcal T_{\Theta_1,C_1}[D_0](t),
+\]
+\[
+D_2(t)
+=
+\mathcal T_{\Theta_2,C_2}[D_1](t).
+\]
+
+Using
+\[
+[[x-C_1]_+-C_2]_+
+=
+[x-C_1-C_2]_+,
+\]
+we obtain
+\[
+\boxed{
+D_2(t)
+=
+\left[
+D_0(t-\Theta_1-\Theta_2)
+-(C_1+C_2)
+\right]_+.
+}
+\tag{26}
+\]
+
+Therefore, repeated composition along a single-source linear chain gives
+\[
+\boxed{
+D_i^{act}(t)
+=
+\left[
+D_0^{act}
+\left(
+t-\sum_{j=1}^{i}\Theta_j
+\right)
+-
+\sum_{j=1}^{i}C_j
+\right]_+.
+}
+\tag{27}
+\]
+
+Thus, on a chain without merges, the new operator
+agrees exactly with the original rule of summing delays and inventory coverage segment by segment.
+
+\section{Correspondence with Daily Production Status for Plant \(i\) on Day \(k\)}
+
+\(D_i^{act}(t)\) is the continuous-time cumulative representation of the original daily production states.
+
+Under the binary baseline,
+\[
+\boxed{
+\frac{u_i(t)}{u_i^0}
+=
+1-\dot D_i^{act}(t).
+}
+\tag{28}
+\]
+
+Therefore
+\[
+\dot D_i^{act}(t)=0
+\quad\Longleftrightarrow\quad
+P_i\text{ produces normally},
+\]
+\[
+\dot D_i^{act}(t)=1
+\quad\Longleftrightarrow\quad
+P_i\text{ is completely shut down}.
+\]
+
+If day \(k\) is defined as
+\[
+[k,k+1),
+\]
+and no additional intraday switching takes place, we can write
+\[
+\boxed{
+x_i[k]
+=
+1-
+\left(
+D_i^{act}(k+1)-D_i^{act}(k)
+\right),
+}
+\tag{29}
+\]
+where
+\[
+x_i[k]\in\{0,1\}.
+\]
+
+Then
+\[
+\boxed{
+x_i[k]=1
+\Longleftrightarrow
+\text{Plant \(i\) operates on day \(k\)},
+}
+\]
+\[
+\boxed{
+x_i[k]=0
+\Longleftrightarrow
+\text{Plant \(i\) is shut down on day \(k\)}.
+}
+\]
+
+If stop/recovery switching is allowed within a day, then
+\[
+D_i^{act}(k+1)-D_i^{act}(k)\in[0,1]
+\]
+naturally represents the proportion of normal production time lost on that day.
+
+\section{Defining Stop/Recovery for Multiple Windows}
+
+If \(P_p\) experiences multiple disjoint production-start gaps,
+the same downstream inventory must not be reinitialized to \(q(0)\) for each window.
+
+Thus one cannot apply
+\[
+C_{p\to q}
+\]
+separately to each window and simply take the union of the resulting intervals.
+
+The correct procedure is first to calculate the entire
+\[
+D_{p\to q}(t)
+=
+[D_p^{act}(t-\Theta_{p\to q})-C_{p\to q}]_+.
+\]
+
+Under the complete-shutdown / complete-recovery baseline,
+all maximal connected intervals satisfying
+\[
+\dot D_{p\to q}(t)=1
+\]
+are defined as
+\[
+\boxed{
+[t_{p\to q}^{\mathrm{stop},\ell},
+t_{p\to q}^{\mathrm{rec},\ell}),
+\qquad
+\ell=1,\ldots,L_{p\to q}.
+}
+\tag{30}
+\]
+
+Thus, in the general case,
+\[
+\boxed{
+D_{p\to q}(t)
+\text{ is the primary interface,}
+\qquad
+(t^{\mathrm{stop}},t^{\mathrm{rec}})
+\text{ is an event label read from \(D\).}
+}
+\]
+
+\section{Normal Flow Rates and Fixed Proportions}
+
+If the output coefficient of \(P_p\) for some product \(Y\) is
+\[
+b_{pY}>0,
+\]
+and a fixed fraction
+\[
+\rho_{p\to q}>0
+\]
+is allocated to the branch leading to \(P_q\), with nonbinding output-edge capacity,
+then the initialized normal flow rate on that branch is
+\[
+\boxed{
+f_{p\to q}^0
+=
+\rho_{p\to q}b_{pY}u_p^0.
+}
+\tag{31}
+\]
+
+Fixed output coefficients and fixed allocation ratios only rescale material quantities.
+After normalizing deficits by their corresponding normal rates into ``equivalent normal-production time,''
+they do not alter the shape of \(D(t)\);
+they enter inventory coverage through the normal flow rates
+\[
+q(0)/f^0.
+\]
+
+\section{Applicability Limits of the Current Rules}
+
+The foregoing closed-form expressions and operators rely on the following baseline:
+\begin{itemize}
+    \item The network is initialized at steady state for \(t<0\);
+    \item Production and transportation delays are fixed;
+    \item Production recipes and output allocation ratios are fixed;
+    \item Output-edge capacity is nonbinding;
+    \item No active restocking, overproduction, or rerouting;
+    \item When normal flow resumes into a depleted inventory, it may pass through immediately without first replenishing the stock to \(q_m(0)\);
+    \item No losses, scrapping, or shelf-life constraints;
+    \item The main focus is binary production intensity: complete shutdown or complete recovery.
+\end{itemize}
+
+If partial recovery is allowed later,
+the cumulative deficit function still applies, but generally
+\[
+0\le \dot D(t)\le1,
+\]
+and
+\[
+u_p(t)=u_p^0[1-\dot D_p^{act}(t)]
+\]
+can describe partial production.
+
+If an equipment failure directly freezes WIP already inside the process,
+production delay is no longer a simple pure delay,
+and an explicit WIP state is required; this case is not considered here.
+
+\section{Final STEP1 Interface}
+
+For a single window, use the intuitive symmetric formulas first
+\[
+\boxed{
+\begin{aligned}
+t_{p\to q}^{\mathrm{stop}}
+&=
+\sigma_p+\Theta_{p\to q}+C_{p\to q},
+\\
+t_{p\to q}^{\mathrm{rec}}
+&=
+\rho_p+\Theta_{p\to q},
+\end{aligned}
+}
+\]
+and check
+\[
+\rho_p-\sigma_p>C_{p\to q}.
+\]
+
+For multiple windows or general DAGs, use the unified operator
+\[
+\boxed{
+D_{p\to q}(t)
+=
+\left[
+D_p^{act}(t-\Theta_{p\to q})
+-C_{p\to q}
+\right]_+.
+}
+\]
+
+STEP1 can therefore be summarized as
+\[
+\boxed{
+\underbrace{D_p^{act}}_{\text{upstream node's own activity}}
+\quad
+\xrightarrow{
+\substack{
+\text{production/transport delay}\\
+\text{inventory absorption}
+}}
+\quad
+\underbrace{D_{p\to q}}_{\text{shortage visible to a specific downstream node}}.
+}
+\]
+
+This \(D_{p\to q}(t)\) is exactly the input received directly by STEP2 during its required-input merge.
+
+\end{document}

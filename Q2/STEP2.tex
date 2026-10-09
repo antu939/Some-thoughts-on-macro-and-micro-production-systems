@@ -1,0 +1,1016 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{geometry}
+\usepackage{bm}
+\geometry{a4paper,margin=2.5cm}
+\allowdisplaybreaks
+
+\title{STEP2: Multi-Input Merging and Continued Propagation\\
+Arbitrary Fixed-Proportion Input/Output Recipes}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Purpose: Merging Does Not End Propagation}
+
+STEP1 has already established that:
+
+\begin{itemize}
+    \item A node's own production-start event is described by
+    \(\sigma_p,\rho_p\) or the general \(D_p^{act}(t)\);
+    \item The supply deficit visible to a specific downstream node from a particular upstream node is described by
+    \(D_{h\to p}(t)\);
+    \item Production delay, transportation delay, and inventories along the path
+    are all handled by branch propagation in STEP1.
+\end{itemize}
+
+STEP2 answers only the following question:
+\[
+\boxed{\begin{gathered}
+\text{After multiple required inputs reach the same node,}\\
+\text{how do they determine its production-start activity?}
+\end{gathered}}
+\]
+
+After the local activity is obtained, propagation continues: the result is passed back to STEP1 for propagation to all downstream nodes.
+
+Thus the overall interface is
+\[
+\boxed{
+\text{STEP1 propagation}
+\rightarrow
+\text{STEP2 merge}
+\rightarrow
+\text{STEP1 propagation}
+\rightarrow\cdots
+}
+\tag{1}
+\]
+
+\section{General Production Node: Arbitrary Fixed-Proportion Input/Output Recipes}
+
+Consider a production node \(P_p\).
+
+Its set of required inputs is
+\[
+\mathcal I_p=\{1,\ldots,n_p\},
+\]
+and its set of outputs is
+\[
+\mathcal O_p=\{1,\ldots,m_p\}.
+\]
+
+The fixed recipe is written as
+\[
+\boxed{
+\sum_{h\in\mathcal I_p}a_hX_h
+\longrightarrow
+\sum_{r\in\mathcal O_p}b_rY_r,
+}
+\tag{2}
+\]
+where
+\[
+a_h>0,
+\qquad
+b_r>0.
+\]
+
+This is not restricted to
+\[
+1+1\to1,
+\]
+but allows any finite number of required inputs and any finite number of outputs,
+with arbitrary fixed positive input/output coefficients.
+
+Let the initialized normal production intensity be
+\[
+\boxed{
+u_p^0\equiv u_p(0).
+}
+\]
+
+Then the initialized normal consumption rate for input \(h\) is
+\[
+\boxed{
+f_{p,h}^0=a_hu_p^0,
+}
+\tag{3}
+\]
+and the initialized normal completion rate for output \(r\) is
+\[
+\boxed{
+g_{p,r}^0=b_ru_p^0.
+}
+\tag{4}
+\]
+
+We adopt a fixed-proportion / Leontief production recipe:
+All required inputs are indispensable,
+and neither input substitution nor dynamic recipe switching is permitted at this stage.
+
+\section{Inputs Passed from STEP1 to STEP2}
+
+For each
+\[
+h\in\mathcal I_p,
+\]
+suppose required input \(h\) corresponds to a branch whose propagation has reached the input-receiving plane of \(P_p\).
+
+STEP1 returns
+\[
+\boxed{
+D_{h\to p}(t).
+}
+\tag{5}
+\]
+
+Its meaning is:
+\[
+\boxed{\begin{gathered}
+D_{h\to p}(t)=\\
+\text{cumulative equivalent normal-production time missing}\\
+\text{for input \(h\), as seen by \(P_p\) by time \(t\)}
+\end{gathered}}
+\]
+
+Therefore the corresponding cumulative material deficit is
+\[
+\boxed{
+a_hu_p^0D_{h\to p}(t).
+}
+\tag{6}
+\]
+
+All
+\[
+D_{h\to p}(t)
+\]
+must already refer to the same observation plane:
+\[
+\boxed{\begin{gathered}
+\text{the production-start plane where \(P_p\) can access}\\
+\text{all required inputs and decide whether to initiate production}
+\end{gathered}}
+\]
+
+STEP2 does not recalculate anything already covered by STEP1,
+including production delay, transportation delay, or inventory coverage.
+
+\section{Single-Window Input Branches and General Input Branches}
+
+If input branch \(h\) has only one effective supply-interruption window
+\[
+[t_{h\to p}^{\mathrm{stop}},
+t_{h\to p}^{\mathrm{rec}}),
+\]
+then
+\[
+\boxed{
+D_{h\to p}(t)
+=
+\min\left\{
+(t-t_{h\to p}^{\mathrm{stop}})_+,
+\Delta_{h\to p}
+\right\},
+}
+\tag{7}
+\]
+where
+\[
+\boxed{
+\Delta_{h\to p}
+=
+\left(
+t_{h\to p}^{\mathrm{rec}}
+-
+t_{h\to p}^{\mathrm{stop}}
+\right)_+.
+}
+\tag{8}
+\]
+
+However, in a general DAG an input branch may already contain multiple disjoint deficits,
+so the main interface between STEP1 and STEP2 is always the complete function
+\[
+\boxed{D_{h\to p}(t),}
+\]
+rather than merely a pair
+\[
+(t^{\mathrm{stop}},t^{\mathrm{rec}}).
+\]
+
+\section{Why Merging Is Not a Simple Union of Windows}
+
+If any required input temporarily prevents \(P_p\) from producing,
+other required inputs will also stop being consumed by the production process.
+
+These nonbinding inputs may keep arriving and be stored during the shutdown,
+creating additional buffers for later periods.
+
+Thus, shortage windows computed independently for different input branches must not be
+simply unioned, nor should their shortage durations be directly added.
+
+The correct objects are the individual inputs'
+\[
+D_{h\to p}(t),
+\]
+which are compared as cumulative constraints at the production-start plane.
+
+\section{Main STEP2 Theorem: Upper Envelope of Required-Input Constraints}
+
+By time \(t\), if the production node had operated continuously at its normal intensity,
+the cumulative consumption of input \(h\) would have been
+\[
+a_hu_p^0t.
+\]
+
+Because this input branch has a cumulative shortfall of
+\[
+a_hu_p^0D_{h\to p}(t),
+\]
+the maximum cumulative production activity that this input can support by time \(t\) is
+\[
+\frac{
+a_hu_p^0t
+-
+a_hu_p^0D_{h\to p}(t)
+}{a_h}.
+\]
+
+Hence
+\[
+\boxed{
+\frac{
+a_hu_p^0t
+-
+a_hu_p^0D_{h\to p}(t)
+}{a_h}
+=
+u_p^0
+\left[
+t-D_{h\to p}(t)
+\right].
+}
+\tag{9}
+\]
+
+Let the cumulative production activity initiated by node \(P_p\) up to time \(t\) be
+\[
+\boxed{
+U_p(t)=\int_0^t u_p(s)\,ds.
+}
+\tag{10}
+\]
+
+Since all required inputs must be simultaneously satisfied,
+\[
+U_p(t)
+\le
+u_p^0
+\left[
+t-D_{h\to p}(t)
+\right]
+\qquad
+\forall h\in\mathcal I_p.
+\]
+
+Under the current greedy baseline,
+the node produces at normal intensity whenever materials permit, so actual cumulative activity takes the tightest constraint:
+\[
+\begin{aligned}
+U_p(t)
+&=
+\min_{h\in\mathcal I_p}
+u_p^0
+\left[
+t-D_{h\to p}(t)
+\right]
+\\
+&=
+u_p^0
+\left[
+t-
+\max_{h\in\mathcal I_p}
+D_{h\to p}(t)
+\right].
+\end{aligned}
+\tag{11}
+\]
+
+Define the node's own cumulative production-start deficit
+\[
+\boxed{
+D_p^{act}(t)
+=
+\max_{h\in\mathcal I_p}
+D_{h\to p}(t).
+}
+\tag{12}
+\]
+
+Then
+\[
+\boxed{
+U_p(t)
+=
+u_p^0
+\left[
+t-D_p^{act}(t)
+\right].
+}
+\tag{13}
+\]
+
+Away from the switching points of events,
+\[
+\boxed{
+u_p(t)
+=
+u_p^0
+\left[
+1-\dot D_p^{act}(t)
+\right].
+}
+\tag{14}
+\]
+
+Under the complete-production / complete-shutdown baseline,
+\[
+\dot D_p^{act}(t)\in\{0,1\}
+\]
+holds almost everywhere.
+
+\section{Why Arbitrary Input Coefficients \(a_h\) Do Not Change the \(\max\) Structure}
+
+Equation \((9)\) shows that
+each required input's material deficit is divided by its own recipe coefficient \(a_h\),
+so that all constraints are expressed in the same units:
+\[
+\boxed{\text{Equivalent time of normal production activity}.}
+\]
+
+Thus although
+\[
+a_1,a_2,\ldots,a_{n_p}
+\]
+may be arbitrarily different,
+after normalization each required input yields an
+\[
+t-D_{h\to p}(t)
+\]
+activity constraint of this form.
+
+Therefore
+\[
+\boxed{
+\text{arbitrary fixed-proportion required-input coefficients}
+\quad\Longrightarrow\quad
+D_p^{act}(t)=\max_hD_{h\to p}(t).
+}
+\tag{15}
+\]
+
+The input coefficients \(a_h\) still affect normal flow rates,
+\[
+f_{p,h}^0=a_hu_p^0
+\]
+and thereby material quantities and inventory coverage,
+but not the normalized \(\max\)-merge form.
+
+\section{Arbitrary Output Coefficients and Branch Allocation}
+
+After merging, \(P_p\) has just one common production-start activity
+\[
+u_p(t),
+\qquad
+D_p^{act}(t).
+\]
+
+The completion rate of output \(r\) is
+\[
+g_{p,r}(t)=b_ru_p(t).
+\]
+
+If that output is then allocated at a fixed proportion
+\[
+\rho_{p,r\to q}
+\]
+to downstream node \(P_q\),
+the normal flow rate of that output branch is
+\[
+\boxed{
+f_{p,r\to q}^0
+=
+\rho_{p,r\to q}b_ru_p^0.
+}
+\tag{16}
+\]
+
+Thus different outputs may have arbitrary fixed positive coefficients and different fixed allocation ratios.
+These coefficients scale material quantities and enter each branch's inventory coverage,
+but all outputs share the same local production activity
+\[
+D_p^{act}(t).
+\]
+
+\section{Reading \(P_p\)'s Own Stop/Recovery Events from the Merged Result}
+
+From
+\[
+D_p^{act}(t)
+\]
+read all maximal connected intervals satisfying
+\[
+\dot D_p^{act}(t)=1
+\]
+as:
+\[
+\boxed{
+I_p^{act,\ell}
+=
+[\sigma_p^\ell,\rho_p^\ell),
+\qquad
+\ell=1,\ldots,L_p.
+}
+\tag{17}
+\]
+
+These intervals represent
+\[
+\boxed{
+\text{production-start gaps when \(P_p\) itself cannot initiate new production}.
+}
+\]
+
+These
+\[
+\sigma_p^\ell,\rho_p^\ell
+\]
+still are not stop/recovery events propagated to an arbitrary downstream node;
+the specific downstream node must be processed again through STEP1.
+
+If the merged result has only one internal window
+\[
+[\sigma_p,\rho_p),
+\]
+it reduces exactly to the single-window input format of STEP1.
+
+\section{How to Continue Propagating Shocks Downstream After Merging}
+
+Suppose an output of \(P_p\) supplies downstream node \(P_q\) along a direct branch.
+
+STEP2's output is not an endpoint; it is
+\[
+\boxed{
+D_p^{act}(t),
+}
+\]
+and immediately becomes the input to the next STEP1 operation.
+
+Define the output branch's
+\[
+\Theta_{p\to q}
+=
+\tau_p^{prod}
++
+\sum_{e\in\mathcal E_{p\to q}}
+\tau_e^{trans},
+\]
+and
+\[
+C_{p\to q}
+=
+\sum_{m\in\mathcal M_{p\to q}}
+\frac{q_m(0)}{f_m^{out,0}}.
+\]
+
+Then
+\[
+\boxed{
+D_{p\to q}(t)
+=
+\mathcal T_{p\to q}[D_p^{act}](t)
+=
+\left[
+D_p^{act}(t-\Theta_{p\to q})
+-
+C_{p\to q}
+\right]_+.
+}
+\tag{18}
+\]
+
+Therefore
+\[
+\boxed{
+\{D_{h\to p}\}_h
+\overset{\mathrm{STEP2}}{\longrightarrow}
+D_p^{act}
+\overset{\mathrm{STEP1}}{\longrightarrow}
+D_{p\to q}.
+}
+\tag{19}
+\]
+
+\section{Recovering the First Version's Symmetric Downstream Formulas for a Single Merged Window}
+
+If \(P_p\) has only one production-start gap after merging in STEP2,
+\[
+[\sigma_p,\rho_p),
+\]
+and the gap is long enough to penetrate all inventory on the \(P_p\to P_q\) branch, i.e.,
+\[
+\rho_p-\sigma_p>C_{p\to q},
+\]
+STEP1 immediately gives
+\[
+\boxed{
+\begin{aligned}
+t_{p\to q}^{\mathrm{stop}}
+&=
+\sigma_p
++\Theta_{p\to q}
++C_{p\to q},
+\\[1mm]
+t_{p\to q}^{\mathrm{rec}}
+&=
+\rho_p
++\Theta_{p\to q}.
+\end{aligned}
+}
+\tag{20}
+\]
+
+Thus even when \(P_p\) itself merges multiple inputs,
+as long as the local result is a single window,
+the same formulas still hold exactly for any downstream node:
+\[
+\boxed{
+\text{stop}=\text{local stop}+\text{delay}+\text{inventory},
+\qquad
+\text{recovery}=\text{local recovery}+\text{delay}.
+}
+\tag{21}
+\]
+
+If
+\[
+\rho_p-\sigma_p\le C_{p\to q},
+\]
+then the output branch's inventory fully absorbs the internal shutdown,
+and no effective supply interruption occurs at \(P_q\).
+
+\section{Continued Propagation of Multi-Window Merge Results}
+
+If
+\[
+D_p^{act}(t)
+\]
+contains multiple disjoint increasing intervals,
+one cannot apply the initial inventory \(C_{p\to q}\) separately to each
+\[
+[\sigma_p^\ell,\rho_p^\ell)
+\]
+interval.
+
+The correct procedure is to evaluate the entire cumulative function once:
+\[
+\boxed{
+D_{p\to q}(t)
+=
+[D_p^{act}(t-\Theta_{p\to q})-C_{p\to q}]_+.
+}
+\tag{22}
+\]
+
+Then, at the receiving plane of \(P_q\), read
+\[
+\boxed{
+[t_{p\to q}^{\mathrm{stop},j},
+t_{p\to q}^{\mathrm{rec},j})
+=
+\text{the \(j\)-th maximal connected interval with \(\dot D_{p\to q}(t)=1\)}.
+}
+\tag{23}
+\]
+
+This prevents the same downstream inventory from being erroneously reinitialized for multiple windows.
+
+\section{One Merge Node Can Cause Different Shocks at Different Downstream Nodes}
+
+If \(P_p\) supplies
+\[
+P_{q_1},P_{q_2},\ldots,P_{q_s},
+\]
+then these nodes share the same
+\[
+D_p^{act}(t),
+\]
+but each output branch has its own
+\[
+\Theta_{p\to q_j},
+\qquad
+C_{p\to q_j}.
+\]
+
+Therefore
+\[
+\boxed{
+D_{p\to q_j}(t)
+=
+\left[
+D_p^{act}(t-\Theta_{p\to q_j})
+-
+C_{p\to q_j}
+\right]_+,
+\qquad
+j=1,\ldots,s.
+}
+\tag{24}
+\]
+
+Consequently, the following can occur:
+\[
+P_p\text{ itself has already shut down},
+\]
+yet one downstream node with ample inventory has felt no supply interruption,
+while another with little inventory has already experienced a shortage.
+
+Therefore
+\[
+\boxed{
+\text{The local activity event is shared by the node;}
+\text{the downstream-visible event is branch-specific.}
+}
+\tag{25}
+\]
+
+\section{Two-Input Example: Shutdown, Recovery, and Another Shutdown After Merging}
+
+Consider
+\[
+A+B\longrightarrow Y.
+\]
+
+Suppose STEP1 has already propagated both upstream branches to \(Y\)'s input-receiving plane:
+\[
+D_{A\to Y}(t)
+=
+\begin{cases}
+0, & t<2,\\
+t-2, & 2\le t<5,\\
+3, & t\ge5,
+\end{cases}
+\]
+and
+\[
+D_{B\to Y}(t)
+=
+\begin{cases}
+0, & t<4,\\
+t-4, & 4\le t<8,\\
+4, & t\ge8.
+\end{cases}
+\]
+
+STEP2 merge:
+\[
+\boxed{
+D_Y^{act}(t)
+=
+\max\left\{
+D_{A\to Y}(t),
+D_{B\to Y}(t)
+\right\}.
+}
+\]
+
+We obtain
+\[
+D_Y^{act}(t)
+=
+\begin{cases}
+0, & t<2,\\
+t-2, & 2\le t<5,\\
+3, & 5\le t<7,\\
+t-4, & 7\le t<8,\\
+4, & t\ge8.
+\end{cases}
+\]
+
+Thus \(Y\)'s own production-start gaps are
+\[
+\boxed{
+[2,5)
+\quad\text{and}\quad
+[7,8).
+}
+\]
+
+To determine how these internal gaps affect some downstream node \(Z\),
+we must not stop at STEP2, but must continue with STEP1:
+\[
+\boxed{
+D_{Y\to Z}(t)
+=
+\left[
+D_Y^{act}(t-\Theta_{Y\to Z})
+-C_{Y\to Z}
+\right]_+.
+}
+\tag{26}
+\]
+
+Only the increasing intervals read from \(D_{Y\to Z}\)
+represent the true events observed by \(Z\):
+\[
+t_{Y\to Z}^{\mathrm{stop},j},
+\qquad
+t_{Y\to Z}^{\mathrm{rec},j}.
+\]
+
+\section{Correspondence with ``Production Status of Plant \(p\) on Day \(k\)''}
+
+The STEP2 result
+\[
+D_p^{act}(t)
+\]
+directly determines the production status of \(P_p\):
+\[
+\boxed{
+\frac{u_p(t)}{u_p^0}
+=
+1-\dot D_p^{act}(t).
+}
+\tag{27}
+\]
+
+If time is discretized by day with no additional intraday switching on day \(k\),
+define
+\[
+\boxed{
+x_p[k]
+=
+1-
+\left(
+D_p^{act}(k+1)-D_p^{act}(k)
+\right).
+}
+\tag{28}
+\]
+
+Under the binary baseline,
+\[
+x_p[k]\in\{0,1\},
+\]
+they respectively indicate normal production or complete shutdown on that day.
+
+Thus, STEP2's \(\max\) merge
+does not merely give the ``merge result'';
+it also directly gives the original question's target after the merge node:
+\[
+\boxed{\text{Production status at every time / on every day}.}
+\]
+
+\section{Unified Recursion for an Arbitrary DAG}
+
+For any production node \(P_p\), the calculation follows this fixed order.
+
+\subsection*{Input Side: Apply STEP1 First to Every Required-Input Branch}
+
+For each
+\[
+h\in\mathcal I_p,
+\]
+calculate
+\[
+\boxed{
+D_{h\to p}(t)
+=
+\mathcal T_{h\to p}[D_h^{act}](t).
+}
+\tag{29}
+\]
+
+\subsection*{At the Node: STEP2 Performs the Required-Input Merge}
+
+\[
+\boxed{
+D_p^{act}(t)
+=
+\max_{h\in\mathcal I_p}
+D_{h\to p}(t).
+}
+\tag{30}
+\]
+
+And from
+\[
+\boxed{
+u_p(t)
+=
+u_p^0
+[1-\dot D_p^{act}(t)]
+}
+\tag{31}
+\]
+obtain the local production status.
+
+\subsection*{Output Side: Apply STEP1 Again to Every Downstream Branch}
+
+For each direct downstream \(P_q\),
+\[
+\boxed{
+D_{p\to q}(t)
+=
+\mathcal T_{p\to q}[D_p^{act}](t).
+}
+\tag{32}
+\]
+
+Thus the entire DAG repeatedly uses just two operations:
+\[
+\boxed{
+\text{Along a branch: delay shift + inventory absorption},
+}
+\]
+and
+\[
+\boxed{
+\text{At a production node: required-input \(\max\) merge}.
+}
+\]
+
+This can be written as
+\[
+\boxed{
+\mathcal T
+\rightarrow
+\max
+\rightarrow
+\mathcal T
+\rightarrow
+\max
+\rightarrow\cdots.
+}
+\tag{33}
+\]
+
+\section{Consistency with Single-Input Nodes}
+
+If
+\[
+|\mathcal I_p|=1,
+\]
+then
+\[
+\boxed{
+D_p^{act}(t)
+=
+D_{h\to p}(t).
+}
+\tag{34}
+\]
+
+Thus STEP2 automatically reduces to the identity mapping.
+The entire network then requires only STEP1 operator composition along linear chains,
+reducing to the original segment-by-segment cumulative formulas.
+
+\section{Inventory Ownership and Avoiding Double Counting}
+
+We must enforce
+\[
+\boxed{
+\text{One physical inventory belongs to exactly one propagation segment}.
+}
+\]
+
+If an inventory has already been included in an input branch's
+\[
+C_{h\to p},
+\]
+STEP2 must not subtract it again as a new buffer.
+
+If \(P_p\) has separate input-side local storage,
+it should be represented explicitly as an inventory node \(M\) in the topology,
+with clear ownership by a particular STEP1 propagation segment.
+
+Similarly,
+if finished-goods storage absorbs an output deficit of \(P_p\),
+it should be handled as an inventory node in output-side STEP1,
+not hidden within production delay or the STEP2 merge.
+
+\section{Applicability Limits of the Current Closed-Form \(\max\) Rule}
+
+The equation
+\[
+D_p^{act}(t)=\max_hD_{h\to p}(t)
+\]
+relies on the following baseline:
+\begin{itemize}
+    \item All inputs are fixed-proportion required inputs;
+    \item Inputs cannot directly substitute for one another;
+    \item Production recipe coefficients \(a_h,b_r\) are fixed;
+    \item Normally, the node operates at \(u_p^0\) whenever materials permit;
+    \item If one input causes a joint shutdown, other arriving inputs can be stored;
+    \item Storage-capacity limits, losses, scrapping, and shelf-life constraints are not yet considered;
+    \item No active restocking, overproduction, or rerouting;
+    \item The current focus is complete shutdown / complete recovery.
+\end{itemize}
+
+Thus ``arbitrary input/output ratios'' here means precisely
+\[
+\boxed{
+\text{a multi-input / multi-output Leontief recipe with fixed positive coefficients},
+}
+\]
+not an arbitrary substitutable, switchable, or nonlinear production technology.
+
+If nonbinding inputs cannot continue to be stored during a joint shutdown,
+for example, if local storage capacity is binding,
+then the simple
+\[
+D_p^{act}(t)=\max_hD_{h\to p}(t)
+\]
+may fail, and explicit inventory-conservation equations are needed.
+
+If partial shortages are allowed,
+the rule can be generalized to
+\[
+0\le\dot D(t)\le1,
+\]
+In that case
+\[
+u_p(t)
+=
+u_p^0
+[1-\dot D_p^{act}(t)]
+\]
+naturally represents partial production.
+
+\section{Final STEP2 Interface}
+
+STEP2 can be summarized as
+\[
+\boxed{
+\underbrace{
+\{D_{h\to p}(t)\}_{h\in\mathcal I_p}
+}_{\text{required-input shortages propagated to \(P_p\) by STEP1}}
+\quad
+\xrightarrow{\ \max\ }
+\quad
+\underbrace{
+D_p^{act}(t)
+}_{\text{local production-start activity gap of \(P_p\)}}
+}
+\tag{35}
+\]
+
+where
+\[
+\boxed{
+D_p^{act}(t)
+=
+\max_{h\in\mathcal I_p}
+D_{h\to p}(t).
+}
+\]
+
+Then for every direct downstream \(P_q\):
+\[
+\boxed{
+D_p^{act}(t)
+\quad
+\xrightarrow{\ \mathrm{STEP1}\ }
+\quad
+D_{p\to q}(t)
+=
+[D_p^{act}(t-\Theta_{p\to q})-C_{p\to q}]_+.
+}
+\tag{36}
+\]
+
+The final closed loop is therefore
+\[
+\boxed{\begin{gathered}
+\text{upstream local activity}
+\rightarrow
+\text{STEP1 propagation}
+\rightarrow
+\text{required-input shortages}\\
+\rightarrow
+\text{STEP2 max merge}
+\rightarrow
+\text{local production activity}
+\rightarrow
+\text{STEP1 propagation}
+\end{gathered}}
+\]
+
+For a single window, one can always return to the first version's symmetric formulas;
+For multiple windows, preserve the entire \(D(t)\) function for continued recursion.
+
+\end{document}
